@@ -24,7 +24,7 @@ public abstract class DynamoDbUsageAnalytics implements UsageAnalytics {
 	private final AmazonDynamoDB dynamoDb;
 	private final String uaTableName;
 	
-	private final static int MAX_DYNAMO_BATCH_SIZE = 25;
+	protected final static int MAX_DYNAMO_BATCH_SIZE = 25;
 	public final static String TAG = "usage-analytics";
 	
 	private final SimpleDateFormat dateFormatter = 
