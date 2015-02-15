@@ -91,6 +91,7 @@ public abstract class DynamoDbUsageAnalytics implements UsageAnalytics {
 	public Map<String, AttributeValue> toDynamoRow(Usage usage) {
 		ImmutableMap.Builder<String, AttributeValue> builder = 
 				ImmutableMap.builder();
+		builder.put("id", 			new AttributeValue().withS(usage.id()));
 		builder.put("installation", new AttributeValue().withS(usage.installation()));
 		builder.put("tag", 			new AttributeValue().withS(usage.tag()));
 		builder.put("description", 	new AttributeValue().withS(usage.description()));
