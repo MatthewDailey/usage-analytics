@@ -9,11 +9,9 @@ public class BatchedUsageAnalytics extends DynamoDbUsageAnalytics {
 	public BatchedUsageAnalytics(AmazonDynamoDB dynamoDb, String uaTableName) {
 		super(dynamoDb, uaTableName);
 	}
-
 	
 	private Usage[] usageQueue = new Usage[DynamoDbUsageAnalytics.MAX_DYNAMO_BATCH_SIZE];
 	private int queueSize = 0;
-	
 	
 	@Override
 	public synchronized void report(Usage usage) {

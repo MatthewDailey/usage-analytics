@@ -16,6 +16,7 @@ import com.amazonaws.services.dynamodbv2.model.AttributeValue;
 import com.amazonaws.services.dynamodbv2.model.BatchWriteItemRequest;
 import com.amazonaws.services.dynamodbv2.model.PutRequest;
 import com.amazonaws.services.dynamodbv2.model.WriteRequest;
+import com.google.common.base.Preconditions;
 import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.Lists;
 
@@ -62,12 +63,25 @@ public abstract class DynamoDbUsageAnalytics implements UsageAnalytics {
 	private void batchWrite(Usage... params) {
 		List<WriteRequest> batch = Lists.newLinkedList();
 		for (Usage usage : params) {
+			if (usage == null) {
+				continue;
+			}
+			
 			batch.add(toWriteRequest(usage));
 			if (batch.size() == MAX_DYNAMO_BATCH_SIZE) {
-				dynamoDb.batchWriteItem(new BatchWriteItemRequest(ImmutableMap.of(uaTableName, batch)));
+				writeBatch(batch);
 				batch = Lists.newLinkedList();
 			}
 		}
+		
+		if (batch.size() > 0) {
+			writeBatch(batch);
+		}
+	}
+	
+	private void writeBatch(List<WriteRequest> batch) {
+		Preconditions.checkState(batch.size() < MAX_DYNAMO_BATCH_SIZE);
+		dynamoDb.batchWriteItem(new BatchWriteItemRequest(ImmutableMap.of(uaTableName, batch)));
 	}
 	
 	private WriteRequest toWriteRequest(Usage usage) {
